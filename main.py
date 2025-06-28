@@ -14,6 +14,9 @@ def main():
     clock = pygame.time.Clock()
     # Variable being used for delta time
     dt = 0
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    Player.containers = (updatable,drawable)
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
     while True:
         # If the X to close the window is clicked, the window closes
@@ -22,9 +25,10 @@ def main():
                 return
         # Converts the milliseconds of frames to seconds
         dt = clock.tick(60) / 1000
-        player.update(dt)
+        updatable.update(dt)
         screen.fill("black")
-        player.draw(screen)
+        for sprite in drawable:
+            sprite.draw(screen)
         pygame.display.flip()
         # Sets the framerate to 60 frames
         clock.tick(60)
