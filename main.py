@@ -2,9 +2,12 @@
 # source venv/bin/activate
 
 # this allows us to use code from the open-source pygame library throughout this file
+import sys
 import pygame
 from constants import *
-from player import Player
+from player import Player,Shot
+from asteroid import Asteroid
+from asteroidfield import AsteroidField
 
 def main():
     pygame.init()
@@ -14,10 +17,16 @@ def main():
     clock = pygame.time.Clock()
     # Variable being used for delta time
     dt = 0
+    asteroids = pygame.sprite.Group()
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
+    shots = pygame.sprite.Group()
+    Shot.containers = (shots,updatable,drawable)
     Player.containers = (updatable,drawable)
+    Asteroid.containers = (asteroids, updatable, drawable)
+    AsteroidField.containers = (updatable)
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    field = AsteroidField()
     while True:
         # If the X to close the window is clicked, the window closes
         for event in pygame.event.get():
@@ -26,6 +35,12 @@ def main():
         # Converts the milliseconds of frames to seconds
         dt = clock.tick(60) / 1000
         updatable.update(dt)
+        for objects in asteroids:
+            # Pass the whole player object made in Line 27
+            # This gains access to both the radius and position variables
+            # For the collision method to use
+            if objects.collision(player):
+                sys.exit("Game over!")
         screen.fill("black")
         for sprite in drawable:
             sprite.draw(screen)
