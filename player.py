@@ -1,5 +1,5 @@
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS,PLAYER_TURN_SPEED,PLAYER_SPEED,SHOT_RADIUS,PLAYER_SHOOT_SPEED
+from constants import PLAYER_RADIUS,PLAYER_TURN_SPEED,PLAYER_SPEED,SHOT_RADIUS,PLAYER_SHOOT_SPEED,PLAYER_SHOOT_COOLDOWN
 import pygame
 
 
@@ -8,6 +8,7 @@ class Player(CircleShape):
     def __init__(self,x,y):
         super().__init__(x,y,PLAYER_RADIUS)
         self.rotation = 0
+        self.timer = 0
 
     # in the player class
     # Makes the player's character look like a Triangle
@@ -28,6 +29,9 @@ class Player(CircleShape):
     
     def update(self, dt):
         keys = pygame.key.get_pressed()
+        # Decreases the self.timer by the delta time (dt)
+        # Self.timer is set in the shoot method to the constant of PLAYER_SHOOT_COOLDOWN
+        self.timer -= dt
         # Movement Keys
         if keys[pygame.K_a]:
             self.rotate(-dt)
@@ -39,7 +43,11 @@ class Player(CircleShape):
             self.move(-dt)
         # Fires Bullets
         if keys[pygame.K_SPACE]:
-            self.shoot()
+            # Sets a cooldown so it's not just constant shots
+            # If the self.timer is greater than 0, you can't shoot
+            # if it's less than 0, you can
+            if self.timer < 0:
+                self.shoot()
 
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -52,11 +60,8 @@ class Player(CircleShape):
         # How big the shot should be
         # and the velocity of the shot
         spawn_shot = Shot(self.position.x, self.position.y, SHOT_RADIUS, shot_rotation * PLAYER_SHOOT_SPEED)
-
-
-
-        
-
+        self.timer = PLAYER_SHOOT_COOLDOWN
+            
 
 class Shot(CircleShape):
     def __init__(self, x, y, radius, velocity):
