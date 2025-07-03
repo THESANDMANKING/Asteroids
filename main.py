@@ -45,6 +45,15 @@ def main():
         for sprite in drawable:
             sprite.draw(screen)
         pygame.display.flip()
+        # Loops through each asteroid in the asteroid group
+        for asteroid in asteroids:   
+            # Then loops through each shot/bullet in the shots group
+            for shot in shots:
+                    # Checks if the shot collides with an asteroid
+                    # If it does then it destroys both the shot and the asteroid
+                    if shot.collision(asteroid):
+                        asteroid.kill()
+                        shot.kill()
         # Sets the framerate to 60 frames
         clock.tick(60)
 
