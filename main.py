@@ -52,8 +52,11 @@ def main():
                     # Checks if the shot collides with an asteroid
                     # If it does then it destroys both the shot and the asteroid
                     if shot.collision(asteroid):
-                        asteroid.kill()
                         shot.kill()
+                        new_asteroids = asteroid.split()
+                        if new_asteroids:
+                            for new_a in new_asteroids:
+                                asteroids.add(new_a)
         # Sets the framerate to 60 frames
         clock.tick(60)
 
